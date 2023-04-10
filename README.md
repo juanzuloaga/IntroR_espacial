@@ -1,5 +1,5 @@
 # IntroR_espacial
-Introducción al análisis espacial en R
+Introducción al análisis espacial en R ([ir a la página](https://juanzuloaga.github.io/IntroR_espacial/Intro_espacial.html))
 
 
 # 1. Objetivos de aprendizaje
