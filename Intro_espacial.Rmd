@@ -9,27 +9,20 @@ output:
     toc_float:
       collapsed: true
 ---
-<center><h2><span style="color:#3399FF">Ecodiversa </span> <span style="color:green">Tropical</span></h2> </center>
-
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-setwd("C:/Talleres_Ecodiversa_R/Intro_espacial")
+setwd("C:/Talleres_R/IntroR_espacial/")
 
 ```
-___
 
+------------------------------------------------------------------------
 
+Este taller ha sido desarrollado por:
 
-```{r include=FALSE, warning=FALSE}
-library(terra)
-library(raster)
-library(sf)
-library(geodata)
-library(kableExtra)
-remotes::install_github("rlesur/klippy")
-```
-
+-   Juan Zuloaga.
+-   Prof. [Melissa Guzmán](https://www.edslab.org/) (University of Southern California).
+-   Keyvette Tabb (University of Southern California)
 
 ```{r klippy, echo=FALSE, include=TRUE}
 klippy::klippy(tooltip_message = 'Haga clic para copiar', tooltip_success = 'Listo', position = c('top', 'right'))
@@ -39,82 +32,185 @@ klippy::klippy(tooltip_message = 'Haga clic para copiar', tooltip_success = 'Lis
 
 Al final de este taller usted podrá:
 
-+ Identificar las características de los datos espaciales, en sus dos formatos: ráster y vectorial.
-+ Conocer los paquetes y funciones en R más utilizados para el manejo de los dos formatos.
-+ Utilizar bases de datos de libre acceso disponibles en la web.
-+ Integrar y graficar los dos formatos 
-+ Implemetar algunos análisis espaciales que pueden servir de herramientas para la toma de decisiones en la conservación de la biodiversidad.
-
+-   Identificar las características de los datos espaciales, en sus dos formatos: ráster y vectorial.
+-   Conocer los paquetes y funciones en R más utilizados para el manejo de los dos formatos.
+-   Utilizar bases de datos de libre acceso disponibles en la web.
+-   Integrar y graficar los dos formatos
+-   Implemetar algunos análisis espaciales que pueden servir de herramientas para la toma de decisiones en la conservación de la biodiversidad.
 
 # 2. ¿Qué hacer si no tienes conocimiento previo en R?
 
 Si no tiene concocimientos de **R** le sugerimos tomar estos cursos que le ayudarán a tener bases y desarrollar sus habilidades.
 
-+ <a href="https://ecodiversa-talleres.github.io/Intro_Motivacional.html" target="_blank">Taller Introductorio</a>
+-   <a href="https://ecodiversa-talleres.github.io/Intro_Motivacional.html" target="_blank">Taller Introductorio</a>
 
-+ <a href="https://ecodiversa-talleres.github.io/IntroR_Bases.html" target="_blank">Introducción a R</a>
+-   <a href="https://ecodiversa-talleres.github.io/IntroR_Bases.html" target="_blank">Introducción a R</a>
 
-+ <a href="https://ecodiversa-talleres.github.io/IntroR_Configurar.html" target="_blank">Configuracion en R</a>
+-   <a href="https://ecodiversa-talleres.github.io/IntroR_Configurar.html" target="_blank">Configuracion en R</a>
 
-+ <a href="https://ecodiversa-talleres.github.io/Intro_Cargar.html" target="_blank">Cargar datos en R</a>
+-   <a href="https://ecodiversa-talleres.github.io/Intro_Cargar.html" target="_blank">Cargar datos en R</a>
 
-+ IntroR_manejar datos
+-   [IntroR_manejar datos](https://juanzuloaga.github.io/IntroR_ManejarDatos/IntroR_ManejarDatos.html)
 
+# 3. Paquetes en R que vamos a utilizar
 
-# 3. Para empezar 
+-   `terra`: Análisis espacial de datos (<a href="https://cran.r-project.org/web/packages/terra/index.html" target="_blank">Hijmans et al 2022</a>).
 
-Inicie RStudio y abra un nuevo R Script utilizando el menu: *File* > *New File* > *R Script*. Usted podrá copiar los códigos que aquí presentamos y probarlos localmente en su computador. Además habrá unos ejercicios que le permitirán consolidar y aumentar sus habilidades en desarrollar códigos y en el análisis espacial.
+-   `raster`: Análisis y modelamiento de datos geográficos (<a href="https://cran.r-project.org/web/packages/raster/index.html" target="_blank">Hijmans et al 2022</a>).
 
+-   `sf`: Simple Features (en inglés) permite el manejo de datos vectoriales (<a href="https://cran.r-project.org/web/packages/sf/index.html#:~:text=sf%3A%20Simple%20Features%20for%20R,projection%20conversions%20and%20datum%20transformations." target="_blank">Pebesma et al 2022</a>).
 
-# 4. Paquetes en R que vamos a utilizar
+-   `stars`: permite el manejo de colecciones espacio-temporales y cubos de datos en formato vectorial y raster (<a href="https://cran.r-project.org/web/packages/stars/index.html" target="_blank">Pebesma et al 2022</a>).
 
-+ `terra`: Análisis espacial de datos (<a href="https://cran.r-project.org/web/packages/terra/index.html" target="_blank">Hijmans et al 2022</a>).
+-   `gdalcubes`: permite el manejo de cubos de datos, por ejemplo observaciones de la tierra a través de colecciones de imágenes de satélite (<a href="https://cran.r-project.org/web/packages/gdalcubes/index.html" target="_blank">Appel et al 2022</a>).
 
-+ `raster`: Análisis y modelamiento de datos geográficos (<a href="https://cran.r-project.org/web/packages/raster/index.html" target="_blank">Hijmans et al 2022</a>).
+-   `geodata` Paquete para decargar datos geogáficos (<a href="https://cran.r-project.org/web/packages/geodata/index.html" target="_blank">Hijmans et al 2022</a>).
 
-
-+ `sf`: Simple Features (en inglés) permite el manejo de datos vectoriales (<a href="https://cran.r-project.org/web/packages/sf/index.html#:~:text=sf%3A%20Simple%20Features%20for%20R,projection%20conversions%20and%20datum%20transformations." target="_blank">Pebesma  et al 2022</a>).
-
-+ `stars`: permite el manejo de colecciones espacio-temporales y cubos de datos en formato vectorial y raster (<a href="https://cran.r-project.org/web/packages/stars/index.html" target="_blank">Pebesma  et al 2022</a>). 
-
-+ `gdalcubes`: permite el manejo de cubos de datos, por ejemplo observaciones de la tierra a través de colecciones de imágenes de satélite (<a href="https://cran.r-project.org/web/packages/gdalcubes/index.html" target="_blank">Appel  et al 2022</a>). 
-
-+ `geodata` Paquete para decargar datos geogáficos (<a href="https://cran.r-project.org/web/packages/geodata/index.html" target="_blank">Hijmans et al 2022</a>). 
+-   `microbenchmark`: Mide el tiempo de procesamiento (parece ser mejor que la función `system.time()` que viene en el paquete base). ([microbenchmark](https://www.rdocumentation.org/packages/microbenchmark/versions/1.4.10/topics/microbenchmark))
 
 `raster` y `terra` son paquetes en R que permiten el manejo de datos en formato ráster. `terra` ha sido desarrollado para reemplazar `raster`, es mucho más rápido y posee mas funcionalidas (entre ellas el manejo de datos vectoriales). En <a href="https://search.r-project.org/CRAN/refmans/terra/html/terra-package.html#:~:text=terra%20provides%20methods%20to%20manipulate,as%20elevation%20or%20the%20weather." target="_blank">este vínculo</a> puede ver las principales funciones de `terra` y la comparación de las principales funciones que se encontraban en `raster` y cómo se llaman ahora en `terra`.
 
-Por otro lado, el paquete `sf` (simple features, en inglés) ha reemplazado completamente el paquete `sp`. Vamos entonces a enfocarnos en `sf` que permite el manejo de datos vectoriales, como por ejemplo: puntos, líneas y polígonos. 
-
+Por otro lado, el paquete `sf` (simple features, en inglés) ha reemplazado completamente el paquete `sp`. Vamos entonces a enfocarnos en `sf` que permite el manejo de datos vectoriales, como por ejemplo: puntos, líneas y polígonos.
 
 Al final veremos algunas las aplicaciones de los paquetes `stars` y `gdalcubes` que permiten el manejo de cubos de datos; como por ejemplo imágenes de satélite que es una colección de varias bandas y años.
 
+Antes de empezar, vamos a instalar (si es necesario) y cargar estos paquetes utilizando la función `library()`.
 
+```{r}
+#install.packages("terra", "raster", "sf", "geodata", "kableExtra", "gdalcubes", "magrittr", "microbenchmark", "stars")
+```
+
+```{r, message=FALSE, warning=FALSE}
+library(terra)
+library(raster)
+library(sf)
+library(geodata)
+library(kableExtra)
+library(magrittr)
+library(gdalcubes)
+library(microbenchmark)
+library(stars)
+remotes::install_github("rlesur/klippy")
+
+```
+
+# 4. Para empezar
+
+## 4.1. Configurar folder de trabajo
+
+Inicie RStudio y abra un nuevo R Script utilizando el menu: *File* \> *New File* \> *R Script*. Usted podrá copiar los códigos que aquí presentamos y probarlos localmente en su computador. Además habrá unos ejercicios que le permitirán consolidar y aumentar sus habilidades en desarrollar códigos y realizar análisis espaciales.
+
+Digámos que crea un directorio llamado "analisis_espacial" para guardar los archivos de trabajo.
+
+```{r}
+
+#  "C:/analisis_espacial"
+
+```
+
+Recuerde que cuando abre RStudio y un nuevo R Script, es importante saber donde esta trabajando con respecto a su disco duro. Para eso puede utilizar la función `getwd()`.
+
+Para asignar el nuevo directorio de trabajo (working directory, en inglés), utilice la función `setwd()`.
+
+```{r}
+# getwd() # consigue el directorio en el cual está trabajando
+
+# setwd("C:/analisis_espacial") 
+
+# en mi caso voy es
+  # setwd("C:/Talleres_R/IntroR_espacial")
+
+```
+
+Ahora que hemos asignado nuestro directorio de trabajo personal, R sabe donde buscar para cargar o guardar archivos!
+
+## 4.2. Configurar folder de archivos temporales
+
+Cuando se manipulan o se hacen análisis con rásters en R, se generan archivos temporales.
+
+Generalmente uno no sabe esto y menos en donde se guardan estos archivos.
+
+Utilice esta función para ver por defecto en donde se guardan:
+
+```{r}
+
+#rasterTmpFile()
+
+#Por ejemplo en mi computador es: "C:/Users/jzulo/AppData/Local/Temp/"
+```
+
+Ahora bien, para tener más control de los archivos temnporales es buena practica configurar un folder en su proyecto que se encargue de guardar estos archivos. Al final de su proyecto los podrá borrar. Veremos su utilidad más adelante.
+
+```{r}
+
+rasterOptions(tmpdir = "./Temp_para_borrar") #Note que estoy utilizando la ruta relativa para crear un folder en mi proyecto "C:/Talleres_R/IntroR_espacial"
+rasterTmpFile()
+```
+
+## Configurar otros folders para su proyecto
+
+Esto es opcional, pero le permitirá manejar mejor su proyecto.
+
+-   Es bueno crear un folder para guarar todos los datos que bajamos de la red. Por ejemplo creemos un folder llamado "input_data".
+
+```{r}
+if(!dir.exists("C:/Talleres_R/IntroR_espacial/Input_data")){
+dir.create("C:/Talleres_R/IntroR_espacial/Input_data")
+}else{
+  print("Folder Input_data ya existe")
+}
+
+```
+
+-   Tambien otro folder para guadar sus rasters intermedias que genera dentro de su proyecto pero que probablemente no son los resultados finales.
+
+```{r}
+if(!dir.exists("C:/Talleres_R/IntroR_espacial/Intermediate")){
+dir.create("C:/Talleres_R/IntroR_espacial/Intermediate")
+}else{
+  print("Folder Intermediate ya existe")
+}
+
+```
+
+-   Finalmente si quiere un folder que contenga los raster finales.
+
+```{r}
+if(!dir.exists("C:/Talleres_R/IntroR_espacial/Outputs")){
+dir.create("C:/Talleres_R/IntroR_espacial/Outputs")
+}else{
+  print("Folder Outputs ya existe")
+}
+
+```
 
 # 5. ¿Por qué es importante sabe manejar y analizar información espacial?
 
-+ Entender patrones de biodiversidad
-+ Predicciones
-+ Monitoreo
-+ Planeación de la conservación
+-   Entender patrones de biodiversidad
+-   Hacer prediciones (como porjemplo sobre la distribución de las espcies y el efecto de cambio climático).
+-   Planear areas de monitoreo
+-   Planeación de la conservación
+-   Entre otras
 
 # 6. ¿Cuáles son los formatos en que encontramos información espacial?
 
-Los principales formatos en el cual encontramos información espacial son: **vectorial** y **ráster**. 
+Los principales formatos en el cual encontramos información espacial son: **vectorial** y **ráster**.
 
 Los datos vectoriales pueden representar puntos, líneas o polígonos. En general, este formato es común para almacenar y representar observaciones (ej., presencia de especies), objetos lineales (ej., como vías) y áreas geográficas (ej., límites administrativos).
 
-Los datos en ráster (que se concocen también como malla o grilla) almacenan pixeles (celdas). Imagine una fotografia en su cámara digital, o las imágenes de su televisor, o las obtenidas por los satélites, etc.  Estas imágenes están compuestas de pixeles.  En adelante utilizaremos el término técnico `ráster` para hacer referencia a este formato de datos, pero paras dar fluidez al texto tambien puede encontrar `malla` o `grilla`. Utilizaremos también las palabras `pixel` o `celda` para hacer referencia a la unidad mínima de un ráster que contiene información.
+Los datos en ráster (que se concocen también como malla o grilla) almacenan pixeles (celdas). Imagine una fotografía en su cámara digital, o las imágenes de su televisor, o las obtenidas por los satélites, etc. Estas imágenes están compuestas de pixeles.
+
+En adelante utilizaremos el término técnico `ráster` para hacer referencia a este formato de datos, pero para dar fluidez al texto tambien puede encontrar `malla` o `grilla`. Utilizaremos también las palabras `pixel` o `celda` para hacer referencia a la unidad mínima de un ráster que contiene información.
 
 # 7. Ráster
 
-Como mencionamos, el ráster es un formato de datos que almacena imágenes digitales en forma de pixeles (o celdas). En general es una cuadricula con varias celdas que contienen valores. 
+Como mencionamos, el ráster es un formato de datos que almacena imágenes digitales en forma de pixeles (o celdas). En general es una cuadrícula con varias celdas que contienen valores.
 
 Empecemos con unos ejemplos para visualizar y entender mejor de lo que estamos hablando.
 
-## Creando rásters
+## 7.1. Creando rásters
 
 Vamos a crear un objecto ráster de 10 columnas y 10 filas, utilizando la funcion `rast()` del paquete `terra`.
-
 
 ```{r warning=FALSE, message=FALSE}
 r1 <- rast(ncol=10, 
@@ -122,15 +218,15 @@ r1 <- rast(ncol=10,
            )
 r1
 ```
-Al explorar el objeto `r1` vemos que:
 
-- el parámetro `class:` es `SpatRaster` (es decir, es básicamente un ráster).
-- el parámentro `dimensions:` es de 10 filas por 10 columnas (tal y como la definimos) y una capa (nlyr).
+Al explorar el objeto `r1` vemos lo siguiente:
+
+-   el parámetro `class:` es `SpatRaster` (es decir, es básicamente un ráster).
+-   el parámetro `dimensions:` es de 10 filas por 10 columnas (tal y como la definimos) y una capa (nlyr).
 
 Pero además vemos que la función le ha asignado otros atributos como:
 
-+ `cood. ref.:` la función asigna por defecto coordenadas geograficas lon/lat, usando WGS 84 (<a href="https://en.wikipedia.org/wiki/World_Geodetic_System" target="_blank">World Geodetic System</a>, por sus siglas en inglés).
-
+-   `cood. ref.:` la función asigna por defecto coordenadas geográficas lon/lat, usando WGS 84 (<a href="https://en.wikipedia.org/wiki/World_Geodetic_System" target="_blank">World Geodetic System</a>, por sus siglas en inglés).
 
 Ahora bien, la función ha generado únicamente la estructura del ráster, pero todavía el ráster no tiene valores.
 
@@ -143,15 +239,13 @@ r1
 
 La función `values()` ha asignado varias cosas:
 
-+ los valores de 1 a 100 (`min value:` y `max value:`, respectivamente) 
-+ `extent:` por defecto la extensión es en coordenadas geográficas. En este caso longitud (-180 a 180) y latitud (-90 a 90; de polo sur a polo norte).
-+ `resolution:` es la resolución de la grilla, es decir el tamaño de cada pixel o celda, se calcula con base en el número de filas y columnas que indicamos al principio (`dimensions:`) y en el `extent:`. Es decir, como definimos 10 por 10, la función asigna el siguiente tamaño de pixel 36 x 18 (grados de longitud(x) y latitud(y), respectivamente). 
-+ el nombre del ráster (`name:` lyr.1).  Lo podemos cambiar más adelante con un nombre que refleje lo que contiene el ráster.
-+ el parámetro `source:` indica la fuente del ráster. En este caso el objeto está en la memoria virtual del computador. Más adelante podrá ver que si descarga un ráster desde su computador podrá utilizar la función `sources()` para conocer la ruta donde está guardado el ráster.
-
+-   los valores de 1 a 100 (`min value:` y `max value:`, respectivamente)
+-   `extent:` por defecto la extensión es en coordenadas geográficas. En este caso longitud (-180 a 180) y latitud (-90 a 90; de polo sur a polo norte).
+-   `resolution:` es la resolución de la grilla, es decir el tamaño de cada pixel o celda, se calcula con base en el número de filas y columnas que indicamos al principio (`dimensions:`) y con base en el `extent:`. Es decir, como definimos 10 por 10, la función asigna el siguiente tamaño de pixel 36 x 18 (grados de longitud(x) y latitud(y), respectivamente).
+-   el nombre del ráster (`name:` lyr.1). Lo podemos cambiar más adelante con un nombre que refleje lo que contiene el ráster.
+-   el parámetro `source:` indica la fuente del ráster. En este caso el objeto está en la memoria virtual del computador. Más adelante podrá ver que si descarga un ráster desde su computador podrá utilizar la función `sources()` para conocer la ruta donde está guardado el ráster.
 
 Visualicemos el ráster que hemos creado, utlizando la función `plot()` y la función `text()` para agregar los valores de cada pixel sobre el ráster.
-
 
 ```{r}
 plot(r1) # uilizamos la función plot para visualizar r1
@@ -161,15 +255,13 @@ text(r1) # utilizamos la función text para adicionar los valores de cada celda
 
 La grilla que se genera posee valores enteros y la función `plot()` genera la escala de la barra vertical.
 
-Ya hemos creado nustro primer ráster!
+Ya hemos creado nuestro primer ráster!
 
+## 7.2. Cobertura espacial (`extent`)
 
-## Extensión espacial (`extent`)
+`extent:` de un ráster representa la cobertura geográfica del ráster, incluyendo celdas sin valor (`NAs`).
 
-La extensión espacial (`extent:`) de un ráster representa la cobertura geográfica del ráster, incluyendo celdas sin valor (`NAs`).
-
-
-Creemos un ráster basados en el objeto `r1` pero reemplacemos los valores de la primero y segunda filas con `NA` (no values).
+Creemos un ráster basados en el objeto `r1` pero reemplacemos los valores de la primera y segunda filas con `NA` (no values).
 
 ```{r}
 r_NA <- r1
@@ -178,7 +270,7 @@ r_NA
 
 ```
 
-Al visualizar el objeto vemos que las primera dos filas del objeto no se observan (tal y como la creamos), pero la extensión espacial e es la misma `extent: -180, 180, -90, 90  (xmin, xmax, ymin, ymax)`
+Al visualizar el objeto vemos que las primera dos filas del objeto no se observan (tal y como la creamos), pero la extensión espacial es la misma `extent: -180, 180, -90, 90  (xmin, xmax, ymin, ymax)`
 
 ```{r}
 plot(r_NA, legend=F)
@@ -188,7 +280,9 @@ text(r_NA, cex=0.9) # utilizamos la función text para adicionar los valores de 
 
 Comparemos los dos objetos `r1` y `r_NA`.
 
-Como puede ver los dos raster tiene en mismo `extent` pero en el segundo no hay datos en las primeras dos filas. Aunque parezca trivial es muy importante tener esto en cuenta, más adelante veremos algunos efecto de esto cuando va a aplicar métodos de análisis.
+Como puede ver los dos rásters tiene en mismo `extent` pero en el segundo no hay datos en las primeras dos filas
+
+Aunque parezca trivial es muy importante tener esto en cuenta, más adelante veremos algunos efectos de esto cuando aplicamos métodos de análisis.
 
 ```{r fig.width=10}
 par(mfrow=c(1,2))
@@ -218,19 +312,17 @@ par(mfrow=c(1,2))
 
 ```
 
+## 7.3. Utilidad de crear un ráster ficticio
 
+El ráster que hemos creado es lo que conocemos como un ráster ficticio (`dummy raster` en inglés). Las utilidades de construir un ráster ficticio son varias, por ejemplo:
 
-## Utilidad de crear un ráster ficticio
+-   podemos utilizar el ráster ficticio para **probar funciones/operaciones y verificar los resultados** antes de aplicarlas a un ráster grande y con muchos datos. Es decir, podemos verificar que nuestras funciones arrojen los resultados esperados, antes de aplicar dichas funciones a bases de datos reales.
 
-El ráster qque hemos creado es lo que conocemos como un raster ficticio (`dummy raster` en inglés). Las utilidades de construir un ráster ficticio  son varias, por ejemplo:
-
-+ podemos utilizar el raster ficticio para **probar funciones/operaciones y verificar los resultados** antes de aplicarlas a un ráster grande y con muchos datos. Es decir, podemos verificar que nuestras funciones arrojen los resultados esperados, antes de aplicar dichas funciones a bases de datos reales.
-
-+ podemos compatir en la web nuestros códigos para resolver un problema al cual no le encontramos solución.  Es decir compartimos un **ejemplo reproducible** de lo que queremos hacer y así otras personas pueden sugerir modificaciones. Unas lecturas de la importancia de crear un buen ejemplo reproducible: <a href="https://eliocamp.github.io/codigo-r/2018/01/buen-ejemplo-reproducible-en-r/" target="_blank">Elio Campiteli</a>, <a href="https://stackoverflow.com/questions/5963269/how-to-make-a-great-r-reproducible-example" target="_blank">stackoverplow.com</a>).
+-   podemos compatir en la web nuestros códigos para resolver un problema al cual no le encontramos solución. Es decir compartimos un **ejemplo reproducible** de lo que queremos hacer y así otras personas pueden sugerir modificaciones. Unas lecturas de la importancia de crear un buen ejemplo reproducible: <a href="https://eliocamp.github.io/codigo-r/2018/01/buen-ejemplo-reproducible-en-r/" target="_blank">Elio Campiteli</a>, <a href="https://stackoverflow.com/questions/5963269/how-to-make-a-great-r-reproducible-example" target="_blank">stackoverplow.com</a>.
 
 Me voy a explicar con un ejemplo para el primer caso.
 
-Primero creemos otro ráster, por ejemplo: `r2` será igual a `r1`+1. 
+Primero creemos otro ráster, por ejemplo: `r2` será igual a `r1`+1.
 
 Revise el gráfico de abajo. ¿Es lo esperado?
 
@@ -257,8 +349,7 @@ En el gráfico de abajo se encuentran los resultados.
 
 Parece que sí. Por ejemplo, la primera celda es 0.3, que es el resultado de (1+2)/10 = 0.3
 
-Este es un ejemplo muy simple, pero espero que muestre la utilidad de crear rásters ficticios. 
-
+Este es un ejemplo muy simple, pero espero que muestre la utilidad de crear rásters ficticios.
 
 ```{r fig.width=10}
 
@@ -268,13 +359,11 @@ plot(r3, legend=F)
 text(r3, digits=2)
 ```
 
-
-
-## Apilando rásters
+## 7.4. Apilando rásters
 
 Una de las funcionalidades más interesantes con rásters es que las podemos apilar, es decir crear un objeto con un conjunto de capas .
 
-Por ejemplo, apilemos `r1`, `r2`, `r3` en un objeto que llamaremos `r_stack`, utilizando la funcion `c()` del paquete `terra` (la funcion análoga en el paquete `raster` es `stack()` o `brick()`).
+Por ejemplo, apilemos `r1`, `r2`, `r3` en un objeto que llamaremos `r_stack`, utilizando la funcion `c()` del paquete `terra` (la función análoga en el paquete `raster` es `stack()` o `brick()`).
 
 ```{r fig.width=10}
 
@@ -282,14 +371,11 @@ r_stack <- c(r1,r2,r3)
 r_stack
 ```
 
-
 Vemos que tenemos ahora un objeto con tres capas que se pueden identificar por el nombre (`name:`en este caso los nombres son iguales) con sus respectivos valores: `min values` y `max values:`.
 
 Dentro de este objeto podemos visualizar cada capa de varias formas:
 
-- La pila de rásters es como una lista de capas, entonces usted puede acceder a cada una utilizando el nombre del objeto seguido de la capa que quiere entre dos parentesis cuadrados, por ejemplo la capa 2 `r_stack[[2]]`.
-
-
+-   La pila de rásters es como una lista de capas, entonces usted puede acceder a cada una utilizando el nombre del objeto seguido de la capa que quiere entre dos parentesis cuadrados, por ejemplo la capa 2 `r_stack[[2]]`.
 
 ```{r}
 
@@ -297,7 +383,7 @@ r_stack[[2]]
 
 ```
 
-- La otra forma es utilizando el signo pesos `$` despues del objeto (`r_stack$`) y le aparecera la lista de las capas que se encuentran en el objeto, identificadas con el nombre (`name:`).  En este caso selecionemos la primera capa (`r_stack$lyr.1`).  El problema es que todas las capas tienen el mismo nombre, entonces usted obtendrá este error:
+-   La otra forma es utilizando el signo pesos `$` despues del objeto (`r_stack$`) y le aparecera la lista de las capas que se encuentran en el objeto, identificadas con el nombre (`name:`). En este caso selecionemos la primera capa (`r_stack$lyr.1`). El problema es que todas las capas tienen el mismo nombre, entonces usted obtendrá este error:
 
 ```{r error=T}
 
@@ -305,45 +391,34 @@ r_stack$lyr.1
 
 ```
 
-
-
 Aprovechemos y cambiemos los nombres de las capas en esta pila.
 
 ```{r}
 
-names(r_stack) <- c("l1", "l2", "l3") # concadenamos (c) el nombre de cada capa utilizando comillas.
+names(r_stack) <- c("capa_1", "capa_2", "capa_3") # encadenamos (c) el nombre de cada capa utilizando comillas.
 
 r_stack
 ```
 
-Ahora sí intentemos utilizando el signo `$`.  Parece que si funciona.
+Ahora sí intentemos utilizando el signo `$`. Parece que si funciona.
 
 ```{r}
 
-r_stack$l2
+r_stack$capa_2
 
 ```
 
-
-## Resolución espacial
+## 7.5. Resolución espacial
 
 La resolución espacial de un ráster es básicamente el tamaño del pixel que a su vez representa el área sobre la superficie terrestre.
 
+Por ejemplo en las imágenes Landsat 8 de la (<a href="https://www.earthdata.nasa.gov/learn/backgrounders/remote-sensing" target="_blank">NASA</a>) se muestra la ciudad de Reykjavik en Islandia (July 7, 2019) en donde se pueden apreciar tres resoluciones (30m, 100m y 300m). Es decir desde una resolución fina con más detalle (cada pixel en el terreno es de 30m por 30m) a una más gruesa y borrosa (cada pixel en el terreno es de 300m por 300m).
 
-Por ejemplo en las imágenes Landsat 8 de la (<a href="https://www.earthdata.nasa.gov/learn/backgrounders/remote-sensing" target="_blank">NASA</a>) se muestra la ciudad de Reykjavik en Islandia (July 7, 2019) en donde se pueden apreciar tres resoluciones (30m, 100m y 300m). Es decir desde una resolución fina con más detalle (cada pixel en el terreno real es de 30m por 30m) a una más gruesa y borrosa (cada pixel en el terreno real es de 300m por 300m). 
+Como la resolución más fina tiene más detalle, es decir má información, se podrían diferenciar los elementos del terreno y hacer una clasificación detallada y precisa de la superficie terrestre. En la más gruesa es un poco más difícil y se tendría que hacer unas generalizaciones sobre lo que creemos que predomina en cada pixel.
 
-Como la resolución más fina tiene más detalle, es decir má información, se podrían diferenciar los elementos del terreno y hacer una clasificación detallada y precisa de la superficie terrestre. En la más gruesa es un poco más difícil y se tendría que hacer unas generalizaciones sobre lo que creemos que predomina en cada pixel. 
+<center>![](https://www.earthdata.nasa.gov/s3fs-public/2022-02/spatial_resolution.jpg){width="80%" height="100%"}</center>
 
-<center>
-
-![](https://www.earthdata.nasa.gov/s3fs-public/2022-02/spatial_resolution.jpg){width=80% height="100%"}
-
-</center>
-
-
-Veamos ahora el concepto de resolución con nuestras rásters ficticias. Creemos otro ráster `r4` de 100 columnas y 100 filas y adicionemos el nombre "l4".
-
-
+Veamos ahora el concepto de resolución con nuestras rásters ficticias. Creemos otro ráster `r4` de 100 columnas y 100 filas y adicionemos el nombre "capa_4".
 
 ```{r warning=FALSE, message=FALSE}
 
@@ -352,43 +427,39 @@ r4 <- rast(ncol=100,
            )
 values(r4) <- 1:ncell(r4)
 
-names(r4) <- "l4" # Note que el objeto es r4  y el nombre de la capa lo cambiamos a "l4"
+names(r4) <- "capa_4" # Note que el objeto es r4  y el nombre de la capa lo cambiamos a "capa_4"
 
 
 ```
 
-Comparemos `r4` con `r_stack$l1`.
+Comparemos `r4` con `r_stack$capa_1`.
 
 ```{r}
 
 r4
 
-r_stack$l1 
+r_stack$capa_1 
 ```
 
-La grilla `r4` es mucho mas fina  que `r_stack$l1` porque:
+La grilla `r4` es mucho mas fina que `r_stack$capa_1` porque:
 
-+ la resolución de `r4` es de 3.6 por 1.8. Es decir que cada pixel es un rectangulo con un lado de 3.6 y el otro 1.8.
+-   la resolución de `r4` es de 3.6 por 1.8. Es decir que cada pixel es un rectangulo con un lado de 3.6 y el otro 1.8.
 
-+ y en el raster `r_stack$l1` los pixeles son de mayor tamaño (rectangulares tambien) de 36 por 18.
+-   y en el ráster `r_stack$capa_1` los pixeles son de mayor tamaño (rectangulares tambien) de 36 por 18.
 
+Note que las celdas no necesariamente tienen que ser cuadradas, especialmente cuando tenemos coordenadas geográficas. Más adelante veremos como los rásters projectados sí tienen celdas cuadradas (bueno, en lo posible). Es decir x, y en `resolution:` deberían tener valores iguales.
 
-Note que las celdas no necesariamente tienen que ser cuadradas, especialmente cuando tenemos coordenadas geográficas.  Más adelante veremos como los rásters projectados sí tienen celdas cuadradas (bueno, en lo posible). Es decir x, y en `resolution:` deberían tener valores iguales.
+Volviendo al ejemplo anterior, podemos también decir que la resolución de `r_stack$capa_1` es mucho más gruesa. de hecho 10 veces más gruesa que `r4`.
 
-
-Volviendo al ejemplo anterior, podemos también decir que la resolución de `r_stack$l1` es mucho más gruesa. de hecho 10 veces más gruesa que `r4`. 
-
-
-Como la resolución de `r4` es más fina, entonces hay mas celdas (10,000; `dimensions:` 100 por 100) que en  `r_stack$l1` (100; `dimensions:` 10 por 10).
+Como la resolución de `r4` es más fina, entonces hay mas celdas (10,000; `dimensions:` 100 por 100) que en `r_stack$capa_1` (100; `dimensions:` 10 por 10).
 
 Note que el área seleccionada (`extent:`) y las coordenadas (`coord. ref.:`) son las mismas. Visualicemos las dos rásters para ver sus diferencias:
-
 
 ```{r fig.width=10}
 
 par(mfrow=c(1,2))
 plot(r4, legend=F, main="r4, resolución fina")
-plot(r_stack$l1, legend=F, main="r_stack$l1, resolución gruesa")
+plot(r_stack$capa_1, legend=F, main="r_stack$capa_1, resolución gruesa")
 
 ```
 
@@ -398,35 +469,31 @@ Veamos:
 
 ```{r error=TRUE}
 
-rstack_new <- c(r_stack$l1, r4)
+rstack_new <- c(r_stack$capa_1, r4)
 
 ```
 
-Pues no, el `Error` nos dice que el número de columnas y filas (`dimensions`) no coinciden.
+Pues NO, el `Error` nos dice que el número de columnas y filas (`dimensions`) no coinciden.
 
-
-## ¿Qué más podemos hacer con rásters?
+## 7.6. ¿Qué más podemos hacer con rásters?
 
 Ya vimos algunas cosas que podemos hacer con rásters, como por ejemplo apilarlas. Pero hay algunos métodos importantes cuando se quieren hacer análisis utilizando rásters. Cuando nos referimos a métodos hacemos referencia a una serie de funciones que se pueden aplicar a uno o varios rásters para obtener información relevante en su investigación.
 
 No podemos en este taller ver todas las funciones, pero al final usted tendrá la capacidad de explorar y aplicar más funciones.
 
-Por ejemplo, ya vimos cómo podemos crear un raster utilizando la función `rast()`, apilar varios rásters con `c()`, y cómo seleccionar algunas capas dentro de una pila de rásters utilizando `[[]]` o `$`.
+Por ejemplo, ya vimos cómo podemos crear un ráster utilizando la función `rast()`, apilar varios rásters con `c()`, y cómo seleccionar algunas capas dentro de una pila de rásters utilizando `[[]]` o `$`.
 
 Ahora veamos algunos métodos y funciones que puden ser mucha utilidad en el análisis espacial.
 
-### Métodos locales
+### 7.6.1. Métodos locales
 
-Los métodos locales hacen referencia a hacer cálculos entre celdas que se sobreponen en una pila de rásters.  Es decir la localización espacial de las celdas es la misma.  La figura muestra cómo podríamos calcular la media de dos raster que se sobreponen.
+Los métodos locales hacen referencia a hacer cálculos entre celdas que se sobreponen en una pila de rásters. Es decir la localización espacial de las celdas es la misma. La figura muestra cómo podríamos calcular la media de dos rásters que se sobreponen.
 
-<center>
-
-![](./Figuras/local_method.png){width=100% height="100%"}
-</center>
+<center>![](./Figuras/local_method.png){width="100%" height="100%"}</center>
 
 Hay varias funciones para hacer cálculos de este tipo. Por ahora utilizaremos la función `app()` para demostrar este método.
 
-Veamos el código en R para calcular la media de la pila de tres capas que hemos creado; es decir la funcion `app()` en `terra` toma los tres valores de cada pixel de cada capa que se sobreponen y calcula la media (`mean`).  Esto se hace en toda la extensión del área que definimos. 
+Veamos el código en R para calcular la media de la pila de tres capas que hemos creado; es decir la funcion `app()` en `terra` toma los tres valores de cada pixel de cada capa que se sobreponen y calcula la media (`mean`). Esto se hace en toda la extensión del área que definimos.
 
 ```{r}
 
@@ -446,19 +513,17 @@ plot(r_stack_media)
 text(r_stack_media, digits=1, cex=0.8)
 ```
 
-<div style="padding: 15px; border: 1px solid transparent; border-color: transparent; margin-bottom: 20px; border-radius: 4px; color: #31708f; background-color: #d9edf7; border-color: #bce8f1;">
-**<span style="color:blue">Tips!</span>** 
+::: {style="padding: 15px; border: 1px solid transparent; border-color: transparent; margin-bottom: 20px; border-radius: 4px; color: #31708f; background-color: #d9edf7; border-color: #bce8f1;"}
+[**Tips!**]{style="color:blue"}
 
-Note que los decimales están indicados con un punto `.`, para los miles se utiliza la coma `,`. Los países del norte utilizan esta nomenclatura y `R` tambien. 
+Note que los decimales están indicados con un punto `.`, para los miles se utiliza la coma `,`. Los países del norte utilizan esta nomenclatura y `R` tambien.
 
-En Colombia es al contrario (no sabría decir si en toda latinoamérica es igual).  Por qué sucede esto? No lo sé.
+En Colombia es al contrario (no sabría decir si en toda latinoamérica es igual). Por qué sucede esto? No lo sé.
 
-Lo que sé es que usted tendrá que ajustar las bases de datos para que tengan el mismo formato requerido en R. En especial tablas en excel que usted ha construido y que le gustaría incorporarlas a un análisis espacial.
+Lo que sé es que usted tendrá que ajustar las bases de datos para que tengan el mismo formato requerido en R. En especial tablas en excel que le gustaría incorporarlas a un análisis espacial.
+:::
 
-</div>
-
-
-Usted ya puede ver las potenciales aplicaciones de estas funciones en un pila de rásters.  Por ejemplo, calcular la media o la varianza de la temperatura durante un año (una pila de 12 capas) en su área de estudio. 
+Usted ya puede ver las potenciales aplicaciones de estas funciones en un pila de rásters. Por ejemplo, calcular la media o la varianza de la temperatura durante un año (una pila de 12 capas) en su área de estudio.
 
 Ahora veamos un ejemplo utilizando datos globales reales!!!!
 
@@ -468,36 +533,30 @@ Vamos ahora a manejar algunos bases de datos de acceso gratuito (open access, en
 
 Por ejemplo, los datos globales de clima, como temperatura y precipitación, pueden ser utilizados ampliamente para entender los efectos del cambio climático en la distribución de las especies.
 
-
-
 <a href="https://www.worldclim.org/data/index.html" target="_blank">WorldClim</a> y <a href="https://chelsa-climate.org/" target="_blank">CHELSA</a> son dos iniciativas que ofrecen datos de buena calidad a nivel global.
 
-Existen además algunos paquetes en R que permiten descargar esta bases de datos.  Por ejemplo, en el paquete `raster` existe la función `getData()` que permite descargar datos de WorldClim.  Sin embargo, esta función será reemplazada por el paquete `geoData`. Veamos un ejemplo
+Existen además algunos paquetes en R que permiten descargar esta bases de datos. Por ejemplo, en el paquete `raster` existe la función `getData()` que permite descargar datos de WorldClim. Sin embargo, esta función será reemplazada por el paquete `geoData`. Veamos un ejemplo
 
 ##### Temperatura media anual a nivel global (WorldClim)
 
-Descarguemos la temperatura media anual a nivel global a una resolución gruesa (10 minutos que es ~340 km2) desde <a href="https://www.worldclim.org/data/worldclim21.html" target="_blank">WorldClim</a>. Tenga en cuenta que descargará un archivo comprimido (.zip) a su computador.
+Descarguemos la temperatura media anual a nivel global a una resolución gruesa (10 minutos que es \~340 km2) desde <a href="https://www.worldclim.org/data/worldclim21.html" target="_blank">WorldClim</a>. Tenga en cuenta que descargará un archivo comprimido (.zip) a su computador.
 
-Existe tambien la posibilidad de descargar las 19 variables disponibles de bioclim utilizando 'bio' como variable.
-
+Existe tambien la posibilidad de descargar las [19 bioclimatic variables](https://www.worldclim.org/data/bioclim.html) disponibles utilizando `var` = 'bio'. Por ahora descargemos la temperatura media (tagv):
 
 ```{r warning=FALSE, message=FALSE}
 tmean <- geodata::worldclim_global(
     var="tavg", # temperatura media
     res=10,     # resolución gruesa
-    path = "C:/Talleres_Ecodiversa_R/Intro_espacial" # folder donde desea guardar los datos
+    path = "C:/Talleres_R/IntroR_espacial" # folder donde desea guardar los datos
                       )
 
 ```
 
-
 Puede ver que son 12 capas (una por cada mes, ver el atributo `nlyr` en `dimensions:`).
 
 ```{r}
-  tmean
+tmean
 ```
-
-
 
 Visualicemos dos capas (Enero y Agosto)
 
@@ -512,17 +571,16 @@ terra::plot(tmean$wc2.1_10m_tavg_10, main="Temperatura media - Agosto", range=c(
 
 ```
 
+Excelente, ya vemos algunos rásters con datos reales. Ahora tratemos de aplicar algunas funciones.
 
-Excelente, ya vemos algunos rásrters con datos reales. Ahora tratemos de aplicar algunas funciones.
-
-
-##### Algunas funciones locales
+##### Funciones locales
 
 Vamos a aplicar las funciones `stdev()`y `app()` al objeto `tmean` que tiene 12 capas.
 
-- **Medidas de dispersion** `stdev()`
+-   **Medidas de dispersion** `stdev()`
 
-Veamos ahora en donde hay mayor variación de la temperatura durante el año, utilizando la función `stdv()` del paquete `terra`.
+Veamos en donde hay mayor variación de la temperatura durante el año, utilizando la función `stdv()` del paquete `terra`.
+
 ```{r}
 tmean_sd <- stdev(x = tmean, # SpatRaster object
                   pop = T, # Si es verdadero (T), entonces la desviación estándard de la población es calculada
@@ -530,78 +588,89 @@ tmean_sd <- stdev(x = tmean, # SpatRaster object
                   )
 ```
 
- ¿Es lo esperado?
+¿Es lo esperado?
 
 ```{r}
 plot(tmean_sd)
 ```
 
-
-
-
-<div style="padding: 15px; border: 1px solid transparent; border-color: transparent; margin-bottom: 20px; border-radius: 4px; color: #31708f; background-color: #d9edf7; border-color: #bce8f1;">
-**<span style="color:blue">Tips!</span>** 
+::: {style="padding: 15px; border: 1px solid transparent; border-color: transparent; margin-bottom: 20px; border-radius: 4px; color: #31708f; background-color: #d9edf7; border-color: #bce8f1;"}
+[**Tips!**]{style="color:blue"}
 
 Recuerde que en `RStudio` puede iluminar la función (ej., `stdev`) y oprimir `F1` para obtener ayuda, es decir información sobre los argumentos que se encuentran dentro de una función.
+:::
 
-</div>
-
-
-+ **Calcular la temperatura media utilizando** `app()`
+-   **Calcular la temperatura media utilizando** `app()`
 
 También podemos calcular la temperatura media del año, utilizando la función `app()` del paquete `terra`.
 
 ```{r}
 
-tmean_mean <- app(x = tmean,  # SpatRaster
+tmean_mean <- terra::app(x = tmean,  # SpatRaster
                   fun = mean) # función
 plot(tmean_mean, main="Temperatura media anual (°C)")
 
 ```
 
+### 7.6.2. Métodos zonales y globales
 
-### Métodos zonales y globales
+Los métodos zonales y globales hacen referencia a hacer cálculos del área total del ráster utilizando la función `global()` o zonas de un ráster utilizando la función `zonal()` (estas zonas se pueden definir con otro capa). Por ejemplo, la figura muestra cómo podemos calcular la sumatoria de una zona en el ráster usando un polígono.
 
-Los métodos zonales y globales hacen referencia a hacer cálculos del area total del ráster utilizando la función `global()` o zonas de un ráster utilizando la función `zonal()` (estas zonas se pueden definir con otro capa). Por ejemplo, la figura muestra cómo podemos calcular la sumatoria de una zona en el ráster.
-
-<center>
-
-![](./Figuras/zonal_method.png)
-
-</center>
+<center>![](./Figuras/zonal_method.png)</center>
 
 Veamos un ejemplo de cómo podemos utilizar la base de datos global de la **huella humana** (Human footprint, en inglés) para calcular el promedio de huella humana para cada país del mundo.
 
-La huella humana reune la mayor parte de las acciones humanas con el potencial de deteriorar la naturaleza (ver el trabajo de <a href="https://www.nature.com/articles/sdata201667" target="_blank">Venter et al 2016</a> para mayores detalles). 
+La huella humana reune la mayor parte de las acciones humanas con el potencial de deteriorar la naturaleza (ver el trabajo de <a href="https://www.nature.com/articles/sdata201667" target="_blank">Venter et al 2016</a> para mayores detalles).
 
 La escala es 0 = muy baja, hasta 50 = muy alta huella humana.
 
-Note que en nuestros códigos vamos a utilizar el simbolo `%>%`, conocido como `forward-pipe operator` en inglés, que envia el resultado de una expresión a la otra función dentro de un mismo objeto. `%>%` fue  originalmente desarrollado paquete <a href="https://cran.r-project.org/web/packages/magrittr/index.html" target="_blank">`magrittr`</a>. 
+Note que en nuestros códigos vamos a utilizar el simbolo `%>%`, conocido como `forward-pipe operator` en inglés, que envia el resultado de una expresión a la otra función dentro de un mismo objeto. Este operador`%>%` fue originalmente desarrollado paquete <a href="https://cran.r-project.org/web/packages/magrittr/index.html" target="_blank">`magrittr`</a>.
 
 En este caso cargamos la base de datos "footprint" y después la agregamos 10 veces utilizando la función `aggregate()`. Tenga en cuenta que la función `aggregate()` se encuentra en varios paquetes, entonces es buena práctica especificar que estámos utilizando la función del paquete `terra`, asi: `terra:aggregate()`.
 
-¿Por qué agregamos el ráster huella humana? Vamos a convertir la huella humana en un raster de resolución más gruesa para acelerar el procesamiento de nuestros siguientes pasos (es decir menos tiempo de procesamiento). Más adelante veremos unos ejemplos del tiempo de procesamiento en diferentes resoluciones. 
+¿Por qué agregamos el ráster huella humana? Porque queremos la huella humana en un ráster de resolución más gruesa para acelerar el procesamiento de nuestros siguientes pasos (es decir menos tiempo de procesamiento). Más adelante veremos unos ejemplos del tiempo de procesamiento en diferentes resoluciones.
 
 ```{r }
 
 huella <- geodata::footprint(year = 2009,
-                             path ="C:/Talleres_Ecodiversa_R/Intro_espacial")%>% 
+                             path ="C:/Talleres_R/IntroR_espacial")%>% 
           terra::aggregate(fact=10, fun=mean)
 huella
 ```
 
-Ahora carguemos los **países** del mundo.
+Ahora carguemos los **países** del mundo. Es una base de datos que contiene información vectorial. Más adelante dedicaremos una sección a este formato.
 
 ```{r}
 paises <- geodata::world(resolution = 5,
                          level = 0,
-                        path = "C:/Talleres_Ecodiversa_R/Intro_espacial")
+                        path = "C:/Talleres_R/IntroR_espacial")
 paises
 ```
 
-Es una base de datos que contiene información vectorial. Más adelante dedicaremos una sección a este formato, por ahora transformemos la información vectorial a ráster, utilizando la función `rasterize()` del paquete `terra`.
+Ahora si, apliquemos la función `zonal()` del paquete `terra` para calcular el promedio de la huella humana en cada país del mundo.
 
-Note que vamos a utilizar el ráster `huella` como plantilla para `rasterize()` los polígonos `paises`; es decir obtendremos un ráster de las mismas `dimensions:`, `resolution:`, `extent` y `coord. ref.:`. Para los valores del ráster utilizaremos el nombre de la columna en el objeto vectorial que contiene el nombre de los países, es decir `NAME_0`.
+```{r}
+
+huella_paises <- terra::zonal(huella,
+                              paises,
+                              as.raster=T, # si es F obtiene solo los datos.
+                              fun = mean
+                              )
+plot(huella_paises)
+
+```
+
+### 7.6.3. Seleccionado un área geográfica dentro de un ráster
+
+Es muy común que usted tenga un ráster con una extensión global, pero usted quiera enfocar su análisis en una región específica. Para esto vamos a utilizar la función `crop()` del paquete `terra::`.
+
+Por ejemplo, seleccionemos los datos de la huella humana solo para `Colombia`.
+
+Por ahora transformemos la información vectorial a ráster, utilizando la función `rasterize()` del paquete `terra::`.
+
+Note que vamos a utilizar el ráster `huella` como plantilla para `rasterize()` los polígonos `paises`; es decir obtendremos un ráster de las mismas `dimensions:`, `resolution:`, `extent` y `coord. ref.:`.
+
+Para los valores del ráster utilizaremos el nombre de la columna en el objeto vectorial que contiene el nombre de los países, es decir `NAME_0`.
 
 ```{r warning=FALSE}
 
@@ -611,25 +680,6 @@ plot(paises_r)
 
 ```
 
-Ahora si, apliquemos la función `zonal()` del paquete `terra` para calcular el promedio de la huella humana en cada país del mundo.
-
-```{r}
-
-huella_paises <- terra::zonal(huella,
-                              paises_r,
-                              as.raster=T, # si es F obtiene solo los datos.
-                              fun = mean
-                              )
-plot(huella_paises)
-
-```
-
-### Seleccionado un área geográfica dentro de un ráster
-
-Es muy común que usted tenga un ráster con una extensión global, pero usted quiera enfocar su análisis en una región específica. Para esto vamos a utilizar la función `crop()` del paquete `terra`.
-
-Por ejemplo, seleccionemos los datos de la huella humana solo para `Colombia`.
-
 Las categorias del objeto `paises_r` pueden ser inspeccionadas con la función `levels()` del paquete `terra`. Generalmente son dos columnas, la primera es un numero entero que identifica los valores de la celda y la segunda es una etiqueta que indica el nombre de la categoria. Si revisa la tabla podrá ver que Colombia es el valor 43.
 
 ```{r}
@@ -637,18 +687,23 @@ knitr::kable(head(terra::levels(paises_r)))%>%
   kableExtra::kable_paper("hover", full_width = F) %>%
   kableExtra::scroll_box(width = "100%", height = "200px")
 ```
-<br>
-Lo que vamos hacer es copiar el objeto `paises_r` y llamarlo `Colombia`, luego vamos a reclasificar todos los valores diferentes a 43 con NA (sin valores), es decir escoger `Colombia`.
+
+<br> Lo que vamos hacer es copiar el objeto `paises_r` y llamarlo `Colombia`, luego vamos a reclasificar todos los valores diferentes a 43 con NA (sin valores), es decir escoger `Colombia`.
 
 ```{r}
 
 Colombia <- paises_r
-Colombia[Colombia != 43]<- NA
+Colombia[Colombia != 43] <- NA
 Colombia
+
+# Compare el código de arriba con este de abajo. ¿Cuales son las diferencias? ¿Podría ser de utilidad?
+
+# Colombia <- paises_r == 43
+
 
 ```
 
-Visualicemos el mapa de `Colombia`.  Hemos seleccionado lo que queremos, pero el `extent:` sigue siendo el mismo, es decir todo el globo entero, por eso vemos el país tan pequeño.
+Visualicemos el mapa de `Colombia`. Hemos seleccionado lo que queremos, pero el `extent:` sigue siendo el mismo, es decir todo el globo entero, por eso vemos el país tan pequeño.
 
 ```{r}
 
@@ -664,7 +719,7 @@ Colombia_t
 plot(Colombia_t)
 ```
 
-Ahora si utilicemos la función `crop()` para extraer los datos de temperatura media en el extent del objeto `Colombia_t`.
+Ahora sí utilicemos la función `crop()` para extraer los datos de temperatura media en el `extent:` del objeto `Colombia_t`.
 
 ```{r}
 
@@ -680,34 +735,32 @@ plot(Colombia_huella)
 
 Para tener solamente los valores de la huella humana dentro de los limites de `Colombia_t` debemos utilizar la función `mask()`. Veamos:
 
-
 ```{r}
 Colombia_huella_mask <- terra::mask(Colombia_huella, Colombia_t)
 plot(Colombia_huella_mask)
 ```
-Ahora bien, por qué no utilizar la opción `mask()` desde un principio? Hay varias razones. 
 
-+ las dos raster deben ser del mismo `extent:`. Al intentar implementar la función `mask()` directamente al mapa global `huella` obtenemos el `Error`.  Es decir el mapa `huella` (es global) y el mapa `Colombia_t` tienen diferente `extent:`.
+Ahora bien, por qué no utilizar la opción `mask()` desde un principio? Hay varias razones.
+
+-   las dos rásters deben ser del mismo `extent:`. Al intentar implementar la función `mask()` directamente al mapa global `huella` obtenemos el `Error`. Es decir el mapa `huella` (es global) y el mapa `Colombia_t` tienen diferente `extent:`.
 
 ```{r error=TRUE}
 Colombia_huella_2 <- terra::mask(huella, Colombia_t)
 ```
-+ la segunda razón es que es más eficiente para R implementar la función `crop()`, porque selecciona filas y columnas del área definida por el `extent:` que queremos.   Al contrario, `mask()` require hacer más cálculos para seleccionar los pixeles que estan en la figura compleja del mapa de Colombia.
 
+-   la segunda razón es que es más eficiente para R implementar la función `crop()`, porque selecciona filas y columnas del área definida por el `extent:` que queremos. Al contrario, `mask()` require hacer cálculos más complejos para seleccionar los pixeles que están bordeando la figura del mapa de Colombia.
 
-<div style="padding: 15px; border: 1px solid transparent; border-color: transparent; margin-bottom: 20px; border-radius: 4px; color: #31708f; background-color: #d9edf7; border-color: #bce8f1;">
-**<span style="color:blue">Tips!</span>** 
+::: {style="padding: 15px; border: 1px solid transparent; border-color: transparent; margin-bottom: 20px; border-radius: 4px; color: #31708f; background-color: #d9edf7; border-color: #bce8f1;"}
+[**Tips!**]{style="color:blue"}
 
 Por eso, es importante implementar primero `crop()` y luego `mask()` para acelerar el proceso.
+:::
 
-</div>
+### 7.6.4. Seleccionando valores en un ráster
 
+En ocasiones necesitamos utilizar solo unos valores determinados dentro del ráster.
 
-### Seleccionando valores en un ráster
-
-En ocasiones reqerimos utilizar solo unos valores determinados dentro del ráster. 
-
-Por ejemplo, queremos obtener un subset de las temperaturas por encima de 25 grados. Para lo cual podemos reclasificar los valores menores a 25 con `NA` (no values).
+Por ejemplo, queremos obtener un mapa con las temperaturas por encima de 25 grados. Para lo cual podemos reclasificar los valores menores a 25 con `NA` (no values).
 
 ```{r}
 tmean_caliente <- tmean_mean
@@ -726,8 +779,7 @@ plot(tmean_templado)
 
 ```
 
-Tambien podemos extraer lo valores en una pila de rásters. Por ejemplo
-
+Tambien podemos extraer lo valores en una pila de rásters. Por ejemplo, seleccionemos los valore mayores a 10 grados en todas las rásters.
 
 ```{r}
 tmean_frio <- tmean
@@ -735,10 +787,7 @@ tmean_frio[tmean_frio > 10] <- NA
 tmean_frio
 ```
 
-
-
-### Seleccionando valores en un ráster con otro ráster
-
+### 7.6.5. Seleccionando valores en un ráster con otro ráster
 
 Vamos a extraer los valores de precipitación global en areas con temperaturas mayores a 20°C (`tmean_caliente`).
 
@@ -748,17 +797,20 @@ Primero, descarguemos la precipitación utilizando el paquete `geogata`:
 prec <- geodata::worldclim_global(
           var="prec",
           res=10,
-          path = "C:/Talleres_Ecodiversa_R/Intro_espacial"
+          path = "C:/Talleres_R/IntroR_espacial"
                                  )
 prec
 ```
+
 Ahora calculemos la precipitación media anual:
 
 ```{r}
-prec_mean <- app(prec, mean)
+
+prec_mean <-terra::app(prec, mean)
 prec_mean
-plot(prec_mean)
+terra::plot(prec_mean)
 ```
+
 Finalmente, utilicemos la función `mask()` para extraer los valores de precipitación en areas con temperaturas mayores a 20°C.
 
 ```{r }
@@ -788,8 +840,7 @@ title("Precipitación en áreas con temp  > 20 °C", line = -2, cex.main=1.6)
 
 ```
 
-
-### Extraer los valores de un ráster
+### 7.6.6. Extraer los valores de un ráster
 
 En algún momento de sus análisis necesitará los valores de los rásters para hacer algunos cálculos adicionales o preparar gráficas. El paquete `terra` ofrece la función `values()` para extraer lo valores del ráster.
 
@@ -804,34 +855,34 @@ Interesante ver que las precipitaciones medias anuales en áreas frías son meno
 plot(values(tmean_mean), values(prec_mean))
 
 ```
+
 Ahora tomemos solamente los datos de precipitación para Colombia.
 
 ```{r}
-Colombia_t_prec <- crop(prec_mean,  # precipitación media
-                        aggregate(Colombia_t, 2) # agreguemos colombia 2 veces para que sea la misma resolución de la precipitación.
+Colombia_t_prec <- terra::crop(prec_mean,  # precipitación media
+                        terra::aggregate(Colombia_t, 2) # agreguemos colombia 2 veces para que sea la misma resolución de la precipitación.
                         )%>%
-                  resample(aggregate(Colombia_t, 2))%>% # asegurarnos que las raster sean iguales en extent, resolution, etc.
+                  resample(aggregate(Colombia_t, 2))%>% # asegurarnos que las rásters sean iguales en extent, resolution, etc.
                   mask(aggregate(Colombia_t, 2))       # Seleccionar solamente el borde administrativo de Colombia
 
 plot(Colombia_t_prec)
 ```
-El Pacífico siempre lluvioso!
 
+El Pacífico siempre lluvioso!
 
 Seleccionemos también la temperatura media para Colombia.
 
 ```{r}
-Colombia_t_tmean <- crop(tmean_mean, aggregate(Colombia_t, 2))%>%
+Colombia_t_tmean <- terra::crop(tmean_mean, aggregate(Colombia_t, 2))%>%
                     resample(aggregate(Colombia_t, 2))%>%
                     mask(aggregate(Colombia_t, 2))
 plot(Colombia_t_tmean)
 ```
 
-
 Ahora visualicemos los valores pareados de temperatura media y precipitación para Colombia con relación al global.
 
 Definitivamente tropical!
-  
+
 ```{r}
   plot(values(tmean_mean), values(prec_mean), xlim=c(-55, 30), ylim=c(0, 1000),
        ylab="",yaxt="n", xlab="",xaxt="n", pch=21, col="black")
@@ -842,41 +893,38 @@ plot(values(Colombia_t_tmean), values(Colombia_t_prec), col="red", xlim=c(-55, 3
 legend("topleft", legend=c("Colombia", "Global"), col=c("red", "black"), pch=c(22,21), cex=0.8)
 ```
 
+### 7.6.7. Proyectando rásters
 
-### Proyectando rásters
+Hasta ahora hemos utilizado coordenadas geográficas para estos análisis. Sin embargo, los análisis más locales o regionales requieren de ráster proyectadas. Es decir los datos proyectados en una superficie plana. En especial si queremos hacer cálculos de áreas para informar sobre aspectos del área de estudio (ej., área de bosques fragmentados, etc).
 
-Hasta ahora hemos utilizado coordenadas geográficas para estos análisis.  Sin embargo, los análisis más locales o regionales requieren de ráster proyectadas. Es decir los datos proyectados en una superficie plana. En especial si queremos hacer cálculos de áreas para informar sobre aspectos del área de estudio (ej., área de bosques fragmentados, etc).
+Hay diferentes <a href="https://es.wikipedia.org/wiki/Proyecci%C3%B3n_cartogr%C3%A1fica" target="_blank">proyecciones cartográficas</a>, pero la que más vamos a utilizar en el análisis espacial es la que mantienen el sentido del área. Cada país y región tiene proyecciones apropiadas que preservan el area, entonces hay que hacer el ejercicio de buscar la mejor proyección para el área de estudio.
 
-Hay diferentes  <a href="https://es.wikipedia.org/wiki/Proyecci%C3%B3n_cartogr%C3%A1fica" target="_blank">proyecciones cartográficas</a>, pero la que más vamos a utilizar en el análisis espacial es la que mantienen el sentido del área. Cada país y región tiene proyecciones apropiadas que preservan el area, entonces hay que hacer el ejercicio de buscar la mejor proyección para el área de estudio.
+Por fortuna hay muchos sitios para buscar y <a href="https://spatialreference.org/" target="_blank">spatialrefence</a> y <a href="https://epsg.io/" target="_blank">epsg.io</a>.
 
-Por fortuna hay muchos sitios para buscar y  <a href="https://spatialreference.org/" target="_blank">spatialrefence</a> y <a href="https://epsg.io/" target="_blank">epsg.io</a>.
-
-Por ejemplo, si buscamos "Colombia" en "spatialreference" nos aparecerá algo asi:
-
+Por ejemplo, si buscamos "Colombia" en `spatialreference` nos aparecerá algo asi:
 
 ![](./Figuras/spatial_reference.png)
 
 En nuestros códigos podemos utilizar cualquiera de los dos formatos <a href="https://en.wikipedia.org/wiki/EPSG_Geodetic_Parameter_Dataset" target="_blank">ESPG</a> (es el que aparece en el primer pantallazo de 'spatialreference') o <a href="https://en.wikipedia.org/wiki/PROJ" target="_blank">Proj4</a>.
 
-Por ejemplo si utilizamos `EPSG:3116` el equivalente Proj4 es:
-`+proj=tmerc +lat_0=4.596200416666666 +lon_0=-74.07750791666666 +k=1 +x_0=1000000 +y_0=1000000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs` 
+Por ejemplo si utilizamos `EPSG:3116` el equivalente Proj4 es: `+proj=tmerc +lat_0=4.5962004166 +lon_0=-74.077507916 +k=1 +x_0=1000000 +y_0=1000000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs`
 
 Veamos cómo utilizamos esto en R.
 
-+ Carguemos la cobertura vegetal (solamente la clase árboles (trees)),
-+ seleccionemos los datos para Colombia y
-+ utilicemos la proyección `EPSG:3116` para reproyectar el ráster.
+-   Carguemos la cobertura vegetal (solamente la clase árboles, "trees"),
+-   seleccionemos los datos para Colombia y
+-   utilicemos la proyección `EPSG:3116` para reproyectar el ráster.
 
 La función `project()` de `terra` incluye varios argumentos:
 
-+ `y =` hace referencia a "coordinate reference system, (por sus siglas en inglés), en este caso `EPSG:3116`.
-+ `method = ` "bilinear" es util para variables continuas y "near" para variables categóricas. Vamos a utilizar "bilinear porque es la proporción de bosque es cada celda (es decir que es una variable continua).
-+ `res =` hace referencia al tamaño de celda (en metros) que queremos al final. Es decir 1Km por 1Km. Celdas cuadradas, lo que facilitará y mejorará la exactitud (accuracy, en inglés) de los cálculos.
+-   `y =` hace referencia a "coordinate reference system, (por sus siglas en inglés), en este caso `EPSG:3116`.
+-   `method =` "bilinear" es util para variables continuas y "near" para variables categóricas. Vamos a utilizar "bilinear porque es la proporción de bosque es cada celda (es decir que es una variable continua).
+-   `res =` hace referencia al tamaño de celda (en metros) que queremos al final. Es decir 1Km por 1Km. Celdas cuadradas, lo que facilitará y mejorará la exactitud (accuracy, en inglés) de los cálculos.
 
 ```{r}
 
 arboles <- geodata::landcover(var= 'trees',
-                    path = "C:/Talleres_Ecodiversa_R/Intro_espacial"                            )%>%
+                    path = "C:/Talleres_R/IntroR_espacial"                            )%>%
   terra::crop(disagg(Colombia_t,2))%>%
   terra::resample(terra::disagg(Colombia_t,2))%>%
   terra::mask(disagg(Colombia_t,2))%>%
@@ -886,7 +934,7 @@ arboles
 plot(arboles)
 ```
 
-Utilicemos la función `cellSize()` de `terra` para calcular el área de cada celda de este ráster.  Casi todas las celdas son cercanas a 1Km2, pero hay algunas muy pequeñas variaciones, en especial en el oriente de Colombia, porque esta proyección esta centrada más en la mitad de Colombia.
+Utilicemos la función `cellSize()` de `terra` para calcular el área de cada celda de este ráster. Casi todas las celdas son cercanas a 1Km2 (\~1,000m x \~1,000m), pero hay algunas muy pequeñas variaciones, en especial en el oriente de Colombia, porque esta proyección esta centrada más en la mitad de Colombia.
 
 Continuemos con nuestro análisis, asumiendo que las celdas son de igual tamaño. Sin embargo, tenga en cuenta reportar la exactitud en sus resultados.
 
@@ -897,16 +945,11 @@ plot(arboles_cellsize)
 
 ```
 
+### 7.6.8. Reclasificando rásters
 
-### Reclasificando rásters
+La reclasificación de un ráster es de mucha utilidad en el análisis espacial. Por ejemplo si usted quiere reclasificar la cobertura de árboles en Colombia en cuatro categorias.
 
-La reclasificación de rásters es de mucha utilidad en el análisis espacial. Por ejemplo si usted quiere reclasificar la cobertura de arboles en Colombia en cuatro categorias.
-
-Para esto debemos crear una matriz que contenga:
-
-+ En las columnas el valor inicial, el valor final del raster y que valor quermos al final
-
-+ Las filas son determinadas con base en los rangos que usted defina.
+Para esto debemos crear una matriz que contenga el valor inicial, el valor final del ráster y que valor queremos al final. Repetir el proceso hasta terminar el rango.
 
 Por ejemplo, definamos tres nuevas categorías de acuerdo a la proporción de árboles y reclasifiquemolas con 1, 2 y 3. En la primera linea se dice, de 0 a 0.25 reclasifiquelo a 1.
 
@@ -918,7 +961,6 @@ m <- c(0, 0.25, 1,
 rclmat <- matrix(m, ncol=3, byrow=TRUE)
 rclmat
 ```
-
 
 Ahora apliquemos esta matriz al ráster.
 
@@ -934,6 +976,7 @@ legend("topright",
        border = FALSE,
        bty = "n") # turn off legend border
 ```
+
 Podríamos tener unas datos del área de cada categoría de la siguiente forma:
 
 ```{r}
@@ -942,14 +985,24 @@ terra::freq(rc)
 
 ```
 
+## 7.7. Tiempo de procesamiento
 
-## Tiempo de procesamiento
+El tiempo de procesamiento cuando se manejan o hacen análísis con rásters incrementa considerablemente por varias razones. Mencionemos algunas:
 
+-   La resolución espacial (tamaño de la celda o grid cell en inglés). Celdas más pequeñas generan mayor tiempo de procesamiento.
+-   La cobertura (tamaño de la grilla o extent en inglés). Areas más grandes requieren de mayor tiempo de procesamiento.
+-   La complejidad y/o tipo de la función o el análisis que se quiere hacer. Por ejemplo, reporjectar un raster puede tomar mucho tiempo.
+-   La combinación de todas las anteriores puede generar mucho tiempo de procesamiento o mucho consumo de memoria.
 
+Veamos un ejemplo para visulalizar cómo se afecta el tiempo de procesamiento cuando manejamos o hacemos cálculos con rásters.
+
+### Resolución espacial
+
+Creemos 3 grillas de la misma extensión pero diferente tamaño de celda:
 
 ```{r}
 
-pixel <- c(1, 10, 100, 1000)
+pixel <- c(1, 10, 100, 1000, 5000, 7500, 10000) # Tamaño de celda
 
 pixel_size <- list()
 for(i in 1:length(pixel)){
@@ -962,133 +1015,107 @@ pixel_size[[i]] <- rast(ncol=pixel[i], nrow=pixel[i])
 
 ```
 
+Ahora apliquemos una función sencilla a cada ráster y calculemos el tiempo que tarda cada una en procesar.
 
+```{r, warning=FALSE, message=FALSE}
 
+tiempo_proceso <- list()
+tiempo <- list()
+
+for(j in 1:length(pixel_size)){
+  
+
+  tiempo_proceso[[j]] <- system.time(sqrt(pixel_size[[j]]))[3]
+    
+}
+
+tiempo <- unlist(tiempo_proceso)
+ 
+df1 <- data.frame(pixel, tiempo)
+
+df1
+
+```
+
+Visualicemos en una gráfica para que pueda observar la tendencia.
 
 ```{r}
 
-elevation <- geodata::elevation_global(res = 0.5,
-                                       path = "C:/Talleres_Ecodiversa_R/Intro_espacial")
+plot(df1$pixel,df1$tiempo, xlab = "Tamaño de celda", ylab = "Tiempo de procesamiento", )
+```
+
+Por ahora tengamos en cuenta que el tiempo de procesamiento es una limitante cuando manejamos rásters. Las soluciones a este problema van desde la optimización de sus códigos hasta la utlización de supercomputadores para acelerar los procesos.
+
+## 7.8. Tamaño de los rásters creados por R
+
+Cuand se carga un ráster o se aplica un función a un raster, R trata de utilizar la memoria RAM de su computador. Sin embargo, si los valores del el objeto (es decir un ráster) no pude ser guardado en la memoria RAM, entonces R empieza a crear archivos temporales que generalmente son bastante grandes.
+
+Los archivos temporales se crean cuando no se asigan la ruta y nombre del archivo dentro de la función o en funciones en las cuales no existe esta opción de asignar la ruta y el nombre al archivo final.
+
+Antes de ver unos ejemplos, recordemos que al principio habíamos configurado un folder para guardar los archivos temporales.
+
+```{r, echo=FALSE}
+# Verifique cual la ruta y folder en donde R está guardando los archivos temporales, utilizando ésta función
+  rasterTmpFile()
+
+# Si quiere cambiar la ruta y folder utilice ésta función
+  rasterOptions(tmpdir = "./Temp_para_borrar") #Note que estoy utilizando la ruta relativa para crear un folder en mi proyecto "C:/Talleres_R/IntroR_espacial"
+
+
+```
+
+Ahora si veamos unos ejemplos. Carguemos un raster (elevación) utilizando el paquete `geodata::`. La función `elevation_global()` le permite indicar la ruta
+
+```{r}
+
+if(!dir.exists("C:/Talleres_R/IntroR_espacial/Input_data")){
+dir.create("C:/Talleres_R/IntroR_espacial/Input_data")
+}else{
+  print("Folder Input_data ya existe")
+}
+
+elevation <- geodata::elevation_global(res = 2.5,
+                                       path = "./Input_data")
 elevation
 ```
 
 ```{r}
 
-plot(elevation)
+terra::plot(elevation)
 ```
 
+Ahora intentemos desagregar este ráster, es decir
 
 ```{r}
 
-elevation_2000m <-  elevation
-system.time(elevation_2000m[elevation_2000m < 2000] <- NA)
+elevation_ag <-  terra::aggregate(elevation, fact=10, "mean")
 
-plot(elevation_2000m)
+terra::size(elevation_ag)
 
 ```
 
+```{r}
 
+elevation_10 <-  sqrt(elevation)
+  
 
+terra::size(elevation_10)
+showTmpFiles()
+```
 
+```{r}
 
-## Cargando y guardando rasters
+elevation_agg2 <-  terra::disagg(elevation, fact=2, method="near")
 
+terra::size(elevation_agg2)
+showTmpFiles()
 
+sources(elevation_agg2)
 
+```
 
-
-
-### Formatos de datos en ráster
-
-Existen varios tipos o formatos de datos en ráster, como por ejemplo GeoTIFF, Esr grid, JPEG 2000, ERDAS IMAGINE (IMG), GeoPackage MBTiles, ASCII, entre otros.
-
-Puede encontrar una descripció detallada de este tipo de formatos de ráster en este <a href="https://mappinggis.com/2015/12/los-formatos-gis-raster-mas-populares/" target="_blank">sitio</a>.
-
-
-La mayoría de formatos están disponibles en R tanto para leer el ráster  (<a href="https://cran.r-project.org/web/packages/raster/index.html" target="_blank">raster</a> o <a href="https://cran.r-project.org/web/packages/terra/terra.pdf" target="_blank">terra</a>) como para guardar en <a href="https://mappinggis.com/2015/12/los-formatos-gis-raster-mas-populares/" target="_blank">raster</a> o en  <a href="https://gdal.org/drivers/raster/index.html" target="_blank">terra</a>.
-
-
+## 
 
 # 8. Vectorial
 
-
-
-
-### Formato de datos vectoriales
-
-
-
- <a href="https://mappinggis.com/2013/11/los-formatos-gis-vectoriales-mas-populares/" target="_blank">Información adicional sobre formatos de  dtaos vectoriales</a>
-
-
-
-# 9. Integradando y gráficando los formatos ráster y vectorial
-
-
-### Mapas básicos usando `plot()`
-https://nceas.github.io/oss-lessons/spatial-data-gis-law/3-mon-intro-gis-in-r.html
-
-### Mapas más elaborados usando `ggplot2()`, `rasterVis()` y `lattice()`
-
-
-https://datacarpentry.org/r-raster-vector-geospatial/02-raster-plot/
-
-https://oscarperpinan.github.io/rastervis/
-
-https://r-graph-gallery.com/27-levelplot-with-lattice
-
-https://cran.r-project.org/web/packages/biscale/vignettes/biscale.html
-
-https://bluegreenlabs.org/post/map-building-3/
-### Mapas interactivos locales usando `mapview()`
-
-
-https://bookdown.org/nicohahn/making_maps_with_r5/docs/mapview.html
-
-
-### Mapas interactivos para subir a la web usando `shiny()` y `leaflet()`
-
-https://programminghistorian.org/en/lessons/shiny-leaflet-newspaper-map-tutorial
-
-
-
-
-
-# 10. El mundo de los catalogos y los cubos de datos
-
-https://github.com/appelmar/gdalcubes_R
-
-https://cran.r-project.org/web/packages/rstac/readme/README.html
-
-https://r-spatial.org/r/2019/07/18/gdalcubes1.html
-
-https://mran.microsoft.com/snapshot/2020-06-22/web/packages/gdalcubes/vignettes/MODIS.html
-
-https://towardsdatascience.com/organizing-geospatial-data-with-spatio-temporal-assets-catalogs-stac-using-python-45f1a64ca082
-
-https://planetarycomputer.microsoft.com/docs/quickstarts/reading-stac/
-https://stacindex.org/catalogs/microsoft-pc#/
-
-
-
-# 11. Análisis espaciales aplicados a la conservación de la biodiversidad.
-
-### Análisis globales vs. locales (el problema de escala)
-
-### Cambios en la cobertura vegetal
-
-
-### Cambios en la dsitribuión de las especies
-
-
-
-
-
-# 12. Informacion adicional
-
-+ <a href="https://rdrr.io/github/rspatial/terra/man/terra-package.html" target="_blank">Descripcion de los methodos del paquete `terra`</a>
-
-
-
-Para incluir...............
-Sin embargo, existen muchas bases de datos que pueden ser importados a un formato vectorial .Por ejemplo, registros que tengan coordenadas geográficas en una hoja de cálculo o texto podrían ser importados y crear un objeto vectorial (ej., puntos).
+### 
